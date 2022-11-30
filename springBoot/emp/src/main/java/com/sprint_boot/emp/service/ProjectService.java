@@ -60,6 +60,16 @@ public class ProjectService {
         return p;
     }
 
+    //update Project
+    public Project updateProject(Project prj,Long id){
+        Optional<Project> p=projectRepository.findById(id);
+        if(p.isPresent()){
+            prj.setPid(id);
+            projectRepository.save(prj);
+            return prj;
+        }
+        return p.get();
+    }
     //delete projectby id
     public boolean deleteProjectById(Long id){
         Optional<Project> p=projectRepository.findById(id);
