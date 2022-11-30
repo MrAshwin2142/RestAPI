@@ -17,21 +17,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @RestController
+@RequestMapping("/prj")
 public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
     // get all projects
-    @GetMapping("/project")
+    @GetMapping()
     public ResponseEntity<List<Project>> getAllProject(){
         return ResponseEntity.of(Optional.of(projectService.getAllProject()));
     }
 
     // get project by id
-    @GetMapping("/project/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable("id") Long id){
         Project temp_prj=projectService.getProjectById(id);
         if(temp_prj==null){
@@ -41,19 +43,29 @@ public class ProjectController {
     }
 
     // get project by employee id
-    @GetMapping("/project/employee/{eid}")
+    @GetMapping("emp/{eid}")
     public ResponseEntity<List<Project>> getProjectByEmpId(@PathVariable("eid") Long eid){
         return ResponseEntity.of(Optional.of(projectService.getProjectByEmpId(eid)));
     }
 
     // add project
-    @PostMapping("/project")
+    @PostMapping()
     public ResponseEntity<Project> addProject(@RequestBody Project prj){
         return new ResponseEntity<>(projectService.addProject(prj),HttpStatus.OK);
     }
 
+    //update project
+    @PutMapping("{id}")
+    public ResponseEntity<Project> updateDepartment(@RequestBody Project prj,@PathVariable("id") Long id){
+        Project temp_prj=projectService.updateProject(prj,id);
+        if(temp_prj==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        
+        return ResponseEntity.of(Optional.of(prj));
+    }
     // delete project by id
-    @DeleteMapping("/project/{pid}")
+    @DeleteMapping("{pid}")
     public ResponseEntity<String> deleteById(@PathVariable("pid") Long pid){
         boolean f=projectService.deleteProjectById(pid);
         if(f){
@@ -62,8 +74,8 @@ public class ProjectController {
         return new ResponseEntity<>("Project not found",HttpStatus.NOT_FOUND);
     }
 
-    // delete project 
-    @DeleteMapping("/project")
+    // delete all project 
+    @DeleteMapping()
     public ResponseEntity<String> deleteAllProjects(){
         projectService.deleteAllProjects();
         return new ResponseEntity<>("All Projects Deleted Successfully",HttpStatus.OK);
