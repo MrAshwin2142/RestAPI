@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/emp")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
@@ -49,6 +49,28 @@ public class EmployeeController {
         return new ResponseEntity<Employee>(employeeService.getEmployeeById(id),HttpStatus.OK);
     }
 
+    // get employee by department id
+    @GetMapping("/dept/{did}")
+    public ResponseEntity<List<Employee>> getEmployeeByDeptId(@PathVariable("did") Long id){
+        List<Employee> emp_list= employeeService.getEmployeeByDeptId(id);
+        if(emp_list==null){
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else{
+            return ResponseEntity.of(Optional.of(emp_list));
+        }
+    }
+
+    // get employee by project id
+    @GetMapping("/prj/{pid}")
+    public ResponseEntity<List<Employee>> getEmployeeByPrjId(@PathVariable("pid") Long id){
+        List<Employee> emp_list= employeeService.getEmployeeByPrjId(id);
+        if(emp_list==null){
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else{
+            return ResponseEntity.of(Optional.of(emp_list));
+        }
+    }
+
     //update employee
     @PutMapping("{eid}/department/{did}")
     public ResponseEntity<Employee> updateEmployee(@RequestBody Employee e, @PathVariable("eid") Long id, @PathVariable("did") Long dept_id){
@@ -65,7 +87,11 @@ public class EmployeeController {
         employeeService.deleteEmployeeById(id);
         return new ResponseEntity<String>("employee deleted successfull",HttpStatus.OK);
     }
-
-     
     
+    @DeleteMapping()
+    public ResponseEntity<String> deleteAllEmployee(){
+        employeeService.deleteAllEmployee();
+        return new ResponseEntity<>("Deleted All departments",HttpStatus.OK);
+    }
+
 }
